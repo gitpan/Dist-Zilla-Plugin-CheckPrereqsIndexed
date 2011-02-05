@@ -24,13 +24,15 @@ requires:
   List::MoreUtils: 0
   Moose: 0
   namespace::autoclean: 0
-version: 0.001
+resources:
+  repository: git://git.codesimply.com/Dist-Zilla-Plugin-CheckPrereqsIndexed.git
+version: 0.002
 x_Dist_Zilla:
   plugins:
     -
       class: Dist::Zilla::Plugin::CheckPrereqsIndexed
       name: '@RJBS/CheckPrereqsIndexed'
-      version: 0.001
+      version: 0.002
     -
       class: Dist::Zilla::Plugin::GatherDir
       name: '@RJBS/@Basic/GatherDir'

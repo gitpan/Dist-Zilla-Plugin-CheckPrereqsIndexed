@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::CheckPrereqsIndexed;
 BEGIN {
-  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.001';
+  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.002';
 }
 use Moose;
 # ABSTRACT: prevent a release if you have prereqs not found on CPAN
@@ -19,8 +19,9 @@ sub before_release {
   my $prereqs  = $self->zilla->prereqs->as_string_hash;
 
   my @packages = sort { $a cmp $b } uniq
-                 map {; keys %$_ }
-                 map {; values %$_ }
+                 grep { $_ ne 'perl' } # special case -- rjbs, 2011-02-05
+                 map  {; keys %$_ }
+                 map  {; values %$_ }
                  values %$prereqs;
 
   return unless @packages; # no prereqs!?
@@ -61,7 +62,7 @@ Dist::Zilla::Plugin::CheckPrereqsIndexed - prevent a release if you have prereqs
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 OVERVIEW
 

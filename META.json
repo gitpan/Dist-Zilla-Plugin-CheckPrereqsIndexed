@@ -42,13 +42,19 @@
       }
    },
    "release_status" : "stable",
-   "version" : "0.001",
+   "resources" : {
+      "repository" : {
+         "type" : "git",
+         "url" : "git://git.codesimply.com/Dist-Zilla-Plugin-CheckPrereqsIndexed.git"
+      }
+   },
+   "version" : "0.002",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
             "class" : "Dist::Zilla::Plugin::CheckPrereqsIndexed",
             "name" : "@RJBS/CheckPrereqsIndexed",
-            "version" : "0.001"
+            "version" : "0.002"
          },
          {
             "class" : "Dist::Zilla::Plugin::GatherDir",
