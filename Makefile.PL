@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-
+use 5.010000;
 
 use ExtUtils::MakeMaker 6.30;
 
@@ -14,7 +14,9 @@ my %WriteMakefileArgs = (
   'BUILD_REQUIRES' => {
     'Test::DZil' => '0',
     'Test::Fatal' => '0',
-    'Test::More' => '0.96'
+    'Test::More' => '0.96',
+    'strict' => '0',
+    'warnings' => '0'
   },
   'CONFIGURE_REQUIRES' => {
     'ExtUtils::MakeMaker' => '6.30'
@@ -25,12 +27,15 @@ my %WriteMakefileArgs = (
   'NAME' => 'Dist::Zilla::Plugin::CheckPrereqsIndexed',
   'PREREQ_PM' => {
     'Dist::Zilla::Role::BeforeRelease' => '0',
+    'Encode' => '0',
     'LWP::UserAgent' => '0',
     'List::MoreUtils' => '0',
     'Moose' => '0',
-    'namespace::autoclean' => '0'
+    'YAML::XS' => '0',
+    'namespace::autoclean' => '0',
+    'version' => '0'
   },
-  'VERSION' => '0.003',
+  'VERSION' => '0.004',
   'test' => {
     'TESTS' => 't/*.t'
   }
