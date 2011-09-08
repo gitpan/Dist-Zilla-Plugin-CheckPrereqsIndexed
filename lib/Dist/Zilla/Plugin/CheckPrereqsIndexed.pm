@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::CheckPrereqsIndexed;
 {
-  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.004';
+  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.005';
 }
 use Moose;
 # ABSTRACT: prevent a release if you have prereqs not found on CPAN
@@ -47,6 +47,7 @@ sub before_release {
   return unless keys %requirement; # no prereqs!?
 
   my $ua = LWP::UserAgent->new(keep_alive => 1);
+  $ua->env_proxy;
 
   my %missing;
   my %too_new;
@@ -112,7 +113,7 @@ Dist::Zilla::Plugin::CheckPrereqsIndexed - prevent a release if you have prereqs
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 OVERVIEW
 
