@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::CheckPrereqsIndexed;
 {
-  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.005';
+  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.006';
 }
 use Moose;
 # ABSTRACT: prevent a release if you have prereqs not found on CPAN
@@ -11,17 +11,29 @@ use 5.10.0; # //
 with 'Dist::Zilla::Role::BeforeRelease';
 
 use Encode qw(encode_utf8);
-use List::MoreUtils qw(uniq);
+use List::MoreUtils qw(any uniq);
 use LWP::UserAgent;
 use version ();
 use YAML::XS qw(Load);
 
 use namespace::autoclean;
 
+sub mvp_multivalue_args { qw(skips) }
+sub mvp_aliases { return { skip => 'skips' } }
+
+
+has skips => (
+  is      => 'ro',
+  isa     => 'ArrayRef[Str]',
+  default => sub { [] },
+);
+
 sub before_release {
   my ($self) = @_;
 
   my $prereqs_hash  = $self->zilla->prereqs->as_string_hash;
+
+  my @skips = map {; qr/$_/ } @{ $self->skips };
 
   my %requirement;
 
@@ -32,7 +44,9 @@ sub before_release {
       next if $pkg eq 'Config'; # special case -- rjbs, 2011-05-20
       next if $pkg eq 'perl';   # special case -- rjbs, 2011-02-05
 
-      my $ver   = $req_set->{$pkg};
+      next if any { $pkg =~ $_ } @skips;
+
+      my $ver = $req_set->{$pkg};
 
       $requirement{ $pkg } //= version->parse(0);
 
@@ -113,7 +127,7 @@ Dist::Zilla::Plugin::CheckPrereqsIndexed - prevent a release if you have prereqs
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 OVERVIEW
 
@@ -128,6 +142,15 @@ If any are unknown, it will prompt the user to continue or abort.
 At present, CheckPrereqsIndexed queries CPANMetaDB, but this behavior is likely
 to change or become pluggable in the future.  In the meantime, this makes
 releasing while offline impossible... but it was anyway, right?
+
+=head1 ATTRIBUTES
+
+=head2 skips
+
+This is an arrayref of regular expressions.  Any module names matching
+any of these regex will not be checked.  This should only be necessary
+if you have a prerequisite that is not available on CPAN (because it's
+distributed in some other way).
 
 =head1 AUTHOR
 
