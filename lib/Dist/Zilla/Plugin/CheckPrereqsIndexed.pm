@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::CheckPrereqsIndexed;
 {
-  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.006';
+  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.007';
 }
 use Moose;
 # ABSTRACT: prevent a release if you have prereqs not found on CPAN
@@ -14,7 +14,7 @@ use Encode qw(encode_utf8);
 use List::MoreUtils qw(any uniq);
 use LWP::UserAgent;
 use version ();
-use YAML::XS qw(Load);
+use JSON::PP;
 
 use namespace::autoclean;
 
@@ -67,18 +67,23 @@ sub before_release {
   my %too_new;
 
   PKG: for my $pkg (sort keys %requirement) {
-    my $res = $ua->get("http://cpanmetadb.appspot.com/v1.0/package/$pkg");
+    my $res = $ua->get("http://cpanidx.org/cpanidx/json/mod/$pkg");
     unless ($res->is_success) {
       $missing{ $pkg } = 1;
       next PKG;
     }
 
-    # YAML::XS only works with UTF-8 bytestreams, so we need to re-encode no
-    # matter what encoding we got. -- rjbs, 2011-08-18
+    # JSON wants UTF-8 bytestreams, so we need to re-encode no matter what
+    # encoding we got. -- rjbs, 2011-08-18
     my $yaml_octets = encode_utf8($res->decoded_content);
-    my $payload = Load($yaml_octets);
+    my $payload = JSON::PP->new->decode($yaml_octets);
 
-    my $indexed_version = version->parse($payload->{version});
+    unless (@$payload) {
+      $missing{ $pkg } = 1;
+      next PKG;
+    }
+
+    my $indexed_version = version->parse($payload->[0]{mod_vers});
     next PKG if $indexed_version >= $requirement{ $pkg };
 
     $too_new{ $pkg } = {
@@ -127,7 +132,7 @@ Dist::Zilla::Plugin::CheckPrereqsIndexed - prevent a release if you have prereqs
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 OVERVIEW
 

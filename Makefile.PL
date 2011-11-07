@@ -28,14 +28,14 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Dist::Zilla::Role::BeforeRelease" => 0,
     "Encode" => 0,
+    "JSON::PP" => 0,
     "LWP::UserAgent" => 0,
     "List::MoreUtils" => 0,
     "Moose" => 0,
-    "YAML::XS" => 0,
     "namespace::autoclean" => 0,
     "version" => 0
   },
-  "VERSION" => "0.006",
+  "VERSION" => "0.007",
   "test" => {
     "TESTS" => "t/*.t"
   }

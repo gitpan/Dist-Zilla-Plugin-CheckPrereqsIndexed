@@ -28,10 +28,10 @@
          "requires" : {
             "Dist::Zilla::Role::BeforeRelease" : 0,
             "Encode" : 0,
+            "JSON::PP" : 0,
             "LWP::UserAgent" : 0,
             "List::MoreUtils" : 0,
             "Moose" : 0,
-            "YAML::XS" : 0,
             "namespace::autoclean" : 0,
             "perl" : "v5.10.0",
             "version" : 0
@@ -56,13 +56,13 @@
          "web" : "https://github.com/rjbs/dist-zilla-plugin-checkprereqsindexed"
       }
    },
-   "version" : "0.006",
+   "version" : "0.007",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
             "class" : "Dist::Zilla::Plugin::CheckPrereqsIndexed",
             "name" : "@RJBS/CheckPrereqsIndexed",
-            "version" : "0.005"
+            "version" : "0.006"
          },
          {
             "class" : "Dist::Zilla::Plugin::GatherDir",
