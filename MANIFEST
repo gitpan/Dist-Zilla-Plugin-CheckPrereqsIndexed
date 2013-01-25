@@ -11,5 +11,8 @@ corpus/DZZ/lib/DZT/Sample.pm
 corpus/DZZ/t/basic.t
 dist.ini
 lib/Dist/Zilla/Plugin/CheckPrereqsIndexed.pm
+t/00-compile.t
+t/000-report-versions-tiny.t
 t/basic.t
-t/release-pod-syntax.t
+xt/release/changes_has_content.t
+xt/release/pod-syntax.t

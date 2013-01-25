@@ -1,7 +1,7 @@
 
 
 This archive contains the distribution Dist-Zilla-Plugin-CheckPrereqsIndexed,
-version 0.007:
+version 0.008:
 
   prevent a release if you have prereqs not found on CPAN
 

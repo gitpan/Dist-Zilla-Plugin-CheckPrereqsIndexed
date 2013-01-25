@@ -12,6 +12,8 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "prevent a release if you have prereqs not found on CPAN",
   "AUTHOR" => "Ricardo Signes <rjbs\@cpan.org>",
   "BUILD_REQUIRES" => {
+    "File::Find" => 0,
+    "File::Temp" => 0,
     "Test::DZil" => 0,
     "Test::Fatal" => 0,
     "Test::More" => "0.96",
@@ -28,14 +30,14 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Dist::Zilla::Role::BeforeRelease" => 0,
     "Encode" => 0,
-    "JSON::PP" => 0,
+    "JSON" => 0,
     "LWP::UserAgent" => 0,
     "List::MoreUtils" => 0,
     "Moose" => 0,
     "namespace::autoclean" => 0,
     "version" => 0
   },
-  "VERSION" => "0.007",
+  "VERSION" => "0.008",
   "test" => {
     "TESTS" => "t/*.t"
   }

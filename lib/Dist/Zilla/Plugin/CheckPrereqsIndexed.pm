@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::CheckPrereqsIndexed;
 {
-  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.007';
+  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.008';
 }
 use Moose;
 # ABSTRACT: prevent a release if you have prereqs not found on CPAN
@@ -10,11 +10,7 @@ use 5.10.0; # //
 
 with 'Dist::Zilla::Role::BeforeRelease';
 
-use Encode qw(encode_utf8);
 use List::MoreUtils qw(any uniq);
-use LWP::UserAgent;
-use version ();
-use JSON::PP;
 
 use namespace::autoclean;
 
@@ -30,6 +26,8 @@ has skips => (
 
 sub before_release {
   my ($self) = @_;
+
+  require version;
 
   my $prereqs_hash  = $self->zilla->prereqs->as_string_hash;
 
@@ -60,6 +58,10 @@ sub before_release {
 
   return unless keys %requirement; # no prereqs!?
 
+  require Encode;
+  require LWP::UserAgent;
+  require JSON;
+
   my $ua = LWP::UserAgent->new(keep_alive => 1);
   $ua->env_proxy;
 
@@ -75,8 +77,8 @@ sub before_release {
 
     # JSON wants UTF-8 bytestreams, so we need to re-encode no matter what
     # encoding we got. -- rjbs, 2011-08-18
-    my $yaml_octets = encode_utf8($res->decoded_content);
-    my $payload = JSON::PP->new->decode($yaml_octets);
+    my $yaml_octets = Encode::encode_utf8($res->decoded_content);
+    my $payload = JSON::->new->decode($yaml_octets);
 
     unless (@$payload) {
       $missing{ $pkg } = 1;
@@ -124,6 +126,7 @@ sub before_release {
 1;
 
 __END__
+
 =pod
 
 =head1 NAME
@@ -132,7 +135,7 @@ Dist::Zilla::Plugin::CheckPrereqsIndexed - prevent a release if you have prereqs
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 OVERVIEW
 
@@ -169,4 +172,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
