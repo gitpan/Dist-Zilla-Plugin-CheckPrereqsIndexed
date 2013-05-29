@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::CheckPrereqsIndexed;
 {
-  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.008';
+  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.009';
 }
 use Moose;
 # ABSTRACT: prevent a release if you have prereqs not found on CPAN
@@ -135,7 +135,7 @@ Dist::Zilla::Plugin::CheckPrereqsIndexed - prevent a release if you have prereqs
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 OVERVIEW
 
@@ -147,8 +147,8 @@ index to ensure that they're all real, installable packages.
 
 If any are unknown, it will prompt the user to continue or abort.
 
-At present, CheckPrereqsIndexed queries CPANMetaDB, but this behavior is likely
-to change or become pluggable in the future.  In the meantime, this makes
+At present, CheckPrereqsIndexed queries CPANIDX, but this behavior is likely to
+change or become pluggable in the future.  In the meantime, this makes
 releasing while offline impossible... but it was anyway, right?
 
 =head1 ATTRIBUTES
