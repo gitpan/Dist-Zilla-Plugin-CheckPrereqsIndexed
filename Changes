@@ -1,5 +1,8 @@
 Revision history for Dist-Zilla-Plugin-CheckPrereqsIndexed
 
+0.010     2013-12-25 22:22:25-0500 America/New_York
+          fix github links
+
 0.009     2013-05-29 19:11:54 America/New_York
           fix documentation: CPANIDX, not CPANMetaDB
 

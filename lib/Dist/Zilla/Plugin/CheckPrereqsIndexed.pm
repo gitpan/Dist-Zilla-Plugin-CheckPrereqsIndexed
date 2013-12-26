@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::CheckPrereqsIndexed;
 {
-  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.009';
+  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.010';
 }
 use Moose;
 # ABSTRACT: prevent a release if you have prereqs not found on CPAN
@@ -129,13 +129,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Dist::Zilla::Plugin::CheckPrereqsIndexed - prevent a release if you have prereqs not found on CPAN
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 OVERVIEW
 
