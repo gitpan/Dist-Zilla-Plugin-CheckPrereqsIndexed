@@ -1,5 +1,9 @@
 Revision history for Dist-Zilla-Plugin-CheckPrereqsIndexed
 
+0.011     2014-04-02 20:54:48-04:00 America/New_York (TRIAL RELEASE)
+        - respect version ranges in requirements
+          (if you require (>1, <2) and the CPAN only has v3, check fails
+
 0.010     2013-12-25 22:22:25-0500 America/New_York
           fix github links
 

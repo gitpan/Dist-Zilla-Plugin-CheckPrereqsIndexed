@@ -1,12 +1,24 @@
 package Dist::Zilla::Plugin::CheckPrereqsIndexed;
-{
-  $Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.010';
-}
-use Moose;
 # ABSTRACT: prevent a release if you have prereqs not found on CPAN
-
+$Dist::Zilla::Plugin::CheckPrereqsIndexed::VERSION = '0.011'; # TRIAL
 use 5.10.0; # //
+use Moose;
 
+#pod =head1 OVERVIEW
+#pod
+#pod Sometimes, AutoPrereqs is a little overzealous and finds a prereq that you
+#pod wrote inline or have in your F<./t> directory.  Although AutoPrereqs should
+#pod grow more accurate over time, and avoid these mistakes, it's not perfect right
+#pod now.  CheckPrereqsIndexed will check every required package against the CPAN
+#pod index to ensure that they're all real, installable packages.
+#pod
+#pod If any are unknown, it will prompt the user to continue or abort.
+#pod
+#pod At present, CheckPrereqsIndexed queries CPANIDX, but this behavior is likely to
+#pod change or become pluggable in the future.  In the meantime, this makes
+#pod releasing while offline impossible... but it was anyway, right?
+#pod
+#pod =cut
 
 with 'Dist::Zilla::Role::BeforeRelease';
 
@@ -17,6 +29,14 @@ use namespace::autoclean;
 sub mvp_multivalue_args { qw(skips) }
 sub mvp_aliases { return { skip => 'skips' } }
 
+#pod =attr skips
+#pod
+#pod This is an arrayref of regular expressions.  Any module names matching
+#pod any of these regex will not be checked.  This should only be necessary
+#pod if you have a prerequisite that is not available on CPAN (because it's
+#pod distributed in some other way).
+#pod
+#pod =cut
 
 has skips => (
   is      => 'ro',
@@ -33,7 +53,7 @@ sub before_release {
 
   my @skips = map {; qr/$_/ } @{ $self->skips };
 
-  my %requirement;
+  my $requirements = CPAN::Meta::Requirements->new;
 
   # first level keys are phase; second level keys are types; we will just merge
   # everything -- rjbs, 2011-08-18
@@ -46,17 +66,12 @@ sub before_release {
 
       my $ver = $req_set->{$pkg};
 
-      $requirement{ $pkg } //= version->parse(0);
-
-      # we have a complex, stupid rule -- rjbs, 2011-08-18
-      next REQ_PKG if $ver =~ /<>=,\s/;
-
-      $requirement{ $pkg } = $ver
-        if version->parse($ver) > $requirement{ $pkg };
+      $requirements->add_string_requirement($pkg => $ver);
     }
   }
 
-  return unless keys %requirement; # no prereqs!?
+  my @modules = $requirements->required_modules;
+  return unless @modules; # no prereqs!?
 
   require Encode;
   require LWP::UserAgent;
@@ -66,9 +81,9 @@ sub before_release {
   $ua->env_proxy;
 
   my %missing;
-  my %too_new;
+  my %unmet;
 
-  PKG: for my $pkg (sort keys %requirement) {
+  PKG: for my $pkg (sort @modules) {
     my $res = $ua->get("http://cpanidx.org/cpanidx/json/mod/$pkg");
     unless ($res->is_success) {
       $missing{ $pkg } = 1;
@@ -86,15 +101,15 @@ sub before_release {
     }
 
     my $indexed_version = version->parse($payload->[0]{mod_vers});
-    next PKG if $indexed_version >= $requirement{ $pkg };
+    next PKG if $requirements->accepts_module($pkg, $indexed_version->stringify);
 
-    $too_new{ $pkg } = {
-      required => $requirement{ $pkg },
+    $unmet{ $pkg } = {
+      required => $requirements->requirements_for_module($pkg),
       indexed  => $indexed_version,
     };
   }
 
-  unless (keys %missing or keys %too_new) {
+  unless (keys %missing or keys %unmet) {
     $self->log("all prereqs appear to be indexed");
     return;
   }
@@ -104,13 +119,13 @@ sub before_release {
     $self->log("the following prereqs could not be found on CPAN: @missing");
   }
 
-  if (keys %too_new) {
-    for my $pkg (sort keys %too_new) {
+  if (keys %unmet) {
+    for my $pkg (sort keys %unmet) {
       $self->log([
         "you required %s version %s but CPAN only has version %s",
         $pkg,
-        "$too_new{$pkg}{required}",
-        "$too_new{$pkg}{indexed}",
+        "$unmet{$pkg}{required}",
+        "$unmet{$pkg}{indexed}",
       ]);
     }
   }
@@ -137,7 +152,7 @@ Dist::Zilla::Plugin::CheckPrereqsIndexed - prevent a release if you have prereqs
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 OVERVIEW
 
