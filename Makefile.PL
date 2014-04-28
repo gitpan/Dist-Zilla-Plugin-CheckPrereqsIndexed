@@ -31,9 +31,6 @@ my %WriteMakefileArgs = (
     "version" => 0
   },
   "TEST_REQUIRES" => {
-    "ExtUtils::MakeMaker" => 0,
-    "File::Spec::Functions" => 0,
-    "List::Util" => 0,
     "Test::DZil" => 0,
     "Test::Fatal" => 0,
     "Test::More" => "0.96",
@@ -41,7 +38,7 @@ my %WriteMakefileArgs = (
     "strict" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.011",
+  "VERSION" => "0.012",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -51,12 +48,9 @@ my %WriteMakefileArgs = (
 my %FallbackPrereqs = (
   "Dist::Zilla::Role::BeforeRelease" => 0,
   "Encode" => 0,
-  "ExtUtils::MakeMaker" => 0,
-  "File::Spec::Functions" => 0,
   "JSON" => 0,
   "LWP::UserAgent" => 0,
   "List::MoreUtils" => 0,
-  "List::Util" => 0,
   "Moose" => 0,
   "Test::DZil" => 0,
   "Test::Fatal" => 0,
